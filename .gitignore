@@ -1,4 +1,5 @@
-# Dependencies
+# Build output
+target/
 node_modules/
 
 # Environment variables and local secrets
@@ -7,8 +8,6 @@ node_modules/
 !.env.example
 
 # Generated output
-dist/
-build/
 coverage/
 namespaces-report.md
 
