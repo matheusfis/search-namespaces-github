@@ -13,6 +13,7 @@ final class GitHubHttpExceptionMapper {
 
     private static final String REQUEST_ID_HEADER = "X-GitHub-Request-Id";
     private static final String RATE_LIMIT_REMAINING_HEADER = "X-RateLimit-Remaining";
+    private static final String RATE_LIMIT_RESET_HEADER = "X-RateLimit-Reset";
 
     private GitHubHttpExceptionMapper() {
     }
@@ -21,25 +22,44 @@ final class GitHubHttpExceptionMapper {
         var status = exception.getStatusCode().value();
         var headers = exception.getResponseHeaders();
         var requestId = firstHeader(headers, REQUEST_ID_HEADER);
-        var message = "GitHub API request failed: " + exception.getStatusText();
+        var message = "GitHub API retornou HTTP %d (%s)".formatted(
+                status,
+                exception.getStatusText()
+        );
 
         if (status == 403 && "0".equals(firstHeader(headers, RATE_LIMIT_REMAINING_HEADER))) {
+            var reset = firstHeader(headers, RATE_LIMIT_RESET_HEADER);
+            var rateLimitMessage = reset == null
+                    ? message
+                    : message + "; X-RateLimit-Reset=" + reset;
             return new GitHubRateLimitException(
-                    message, endpoint, requestId, "Wait for the GitHub rate-limit window to reset.");
+                    rateLimitMessage,
+                    endpoint,
+                    requestId,
+                    GitHubTroubleshootingGuide.RATE_LIMIT
+            );
         }
 
         return switch (status) {
             case 401 -> new GitHubAuthenticationException(
-                    message, endpoint, requestId, "Verify the GitHub token and its permissions.");
+                    message,
+                    endpoint,
+                    requestId,
+                    GitHubTroubleshootingGuide.AUTHENTICATION
+            );
             case 404 -> new GitHubNotFoundException(
-                    message, endpoint, requestId, "Verify the resource name and token access.");
+                    message,
+                    endpoint,
+                    requestId,
+                    GitHubTroubleshootingGuide.NOT_FOUND
+            );
             case 500, 501, 502, 503, 504, 505, 506, 507, 508, 510, 511 ->
                     new GitHubApiUnavailableException(
                             message,
                             endpoint,
                             status,
                             requestId,
-                            "Retry later and check GitHub status.",
+                            GitHubTroubleshootingGuide.UNAVAILABLE,
                             exception
                     );
             default -> new GitHubApiException(
@@ -47,7 +67,9 @@ final class GitHubHttpExceptionMapper {
                     endpoint,
                     status,
                     requestId,
-                    "Review the GitHub API response and token permissions.",
+                    status == 403
+                            ? GitHubTroubleshootingGuide.FORBIDDEN
+                            : GitHubTroubleshootingGuide.GENERIC,
                     exception
             );
         };
@@ -59,7 +81,7 @@ final class GitHubHttpExceptionMapper {
                 endpoint,
                 0,
                 null,
-                "Check network, proxy and custom CA certificate configuration.",
+                GitHubTroubleshootingGuide.UNAVAILABLE,
                 exception
         );
     }
