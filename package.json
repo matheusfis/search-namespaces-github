@@ -1,0 +1,25 @@
+{
+  "name": "github-namespace-scanner",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CLI que varre os repositorios de uma organizacao do GitHub, filtra por topics (AND) e agrupa pela Actions Variable NAMESPACE.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@octokit/plugin-paginate-rest": "^11.4.0",
+    "@octokit/plugin-throttling": "^9.3.2",
+    "@octokit/rest": "^21.0.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
