@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.matheusfischer</groupId>
+    <groupId>githubnamespacescanner</groupId>
     <artifactId>github-namespace-scanner</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <name>GitHub Namespace Scanner</name>
