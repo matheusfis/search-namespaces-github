@@ -16,9 +16,9 @@ permissions:
 
 jobs:
   analyze:
-    name: Analyze JavaScript and TypeScript
+    name: Analyze Java
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Check out repository
@@ -27,8 +27,8 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
-          languages: javascript-typescript
-          build-mode: none
+          languages: java-kotlin
+          build-mode: autobuild
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v4
