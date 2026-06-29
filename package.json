@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@octokit/plugin-paginate-rest": "^11.4.0",
+    "@octokit/plugin-paginate-rest": "^14.0.0",
     "@octokit/plugin-throttling": "^9.3.2",
     "@octokit/rest": "^21.0.2",
     "dotenv": "^16.4.5"
